@@ -12,6 +12,8 @@ This file tracks project intent, current status, and the latest requests from th
 - Resource system handles pooled bit spawning and scoring.
 - Fog-of-war system uses a mask texture with per-run reset.
 - Basic UI panels show run stats and end-of-run summaries.
+- Trail field painting/decay is in place, with phospher-driven trail signals and a trail juice HUD.
+- Phospher lifetime expiry triggers a death event and ends the run when population reaches zero.
 
 ## Owner Requests / Expectations
 - Provide comprehensive reviews and optimization/tidy-up recommendations.
@@ -22,6 +24,7 @@ This file tracks project intent, current status, and the latest requests from th
 - Profile flocking/perception and fog updates to identify hotspots.
 - Tune signal fields and steering weights for clearer emergent behaviors.
 - Expand UI/VFX feedback for deposits, depletion, and run transitions.
+- Decide on trail rendering visuals (material, palette, blending) and tune decay/strength.
 
 ## Open Questions
 - What is the target platform and performance budget?

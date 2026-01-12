@@ -17,7 +17,7 @@ namespace Phosphers.Fog
         [SerializeField] private Material fogMaterialTemplate;         // Material using the Fog shader below
 
         [Header("Debug")]
-        [SerializeField] private bool debugMousePaint = true;
+        [SerializeField] private bool debugMousePaint = false;
         [SerializeField] private KeyCode debugHoldKey = KeyCode.Mouse0;
         [SerializeField] private float debugRevealRadiusOverride = -1f;
 
