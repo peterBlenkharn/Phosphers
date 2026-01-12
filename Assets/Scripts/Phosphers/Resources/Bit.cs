@@ -1,9 +1,10 @@
 using UnityEngine;
+using Phosphers.Core.Pooling;
 
 namespace Phosphers.Resources
 {
     [RequireComponent(typeof(Collider2D))]
-    public class Bit : MonoBehaviour, IBitTarget
+    public class Bit : MonoBehaviour, IBitTarget, IPoolable
     {
         [Header("Spec (default if not overridden by spawner)")]
         [SerializeField] private BitType type = BitType.Generic;
@@ -57,6 +58,16 @@ namespace Phosphers.Resources
             IsAvailable = available;
             if (_col != null) _col.enabled = available;
             if (sr != null) sr.enabled = available;
+        }
+
+        public void OnSpawned()
+        {
+        }
+
+        public void OnDespawned()
+        {
+            MarkAvailable(false);
+            Owner = null;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
