@@ -13,6 +13,8 @@ namespace Phosphers.Signals
         [SerializeField] private bool requireRunState = true;
 
         private float _timer;
+        private Vector2 _lastWorld;
+        private bool _hasLast;
         private GameManager _gameManager;
         private TrailJuiceSystem _juice;
 
@@ -38,6 +40,7 @@ namespace Phosphers.Signals
         private void OnEnable()
         {
             _timer = 0f;
+            _hasLast = false;
         }
 
         private void Update()
@@ -48,9 +51,17 @@ namespace Phosphers.Signals
             var cam = Camera.main;
             if (cam == null) return;
 
-            if (!Input.GetMouseButton(0)) return;
+            if (!Input.GetMouseButton(0))
+            {
+                _hasLast = false;
+                return;
+            }
 
-            if (_juice != null && _juice.CurrentJuice <= 0f) return;
+            if (_juice != null && _juice.CurrentJuice <= 0f)
+            {
+                _hasLast = false;
+                return;
+            }
 
             _timer -= Time.deltaTime;
             if (_timer > 0f) return;
@@ -58,10 +69,33 @@ namespace Phosphers.Signals
 
             float dt = _timer;
             float cost = juicePerSecond * dt;
-            if (_juice != null && !_juice.TryConsume(cost)) return;
+            if (_juice != null && !_juice.TryConsume(cost))
+            {
+                _hasLast = false;
+                return;
+            }
 
             Vector2 world = cam.ScreenToWorldPoint(Input.mousePosition);
-            trailField.Paint(world, drawRadius, drawStrength);
+            if (!_hasLast)
+            {
+                trailField.Paint(world, drawRadius, drawStrength);
+                _lastWorld = world;
+                _hasLast = true;
+                return;
+            }
+
+            float step = Mathf.Max(0.05f, drawRadius * 0.5f);
+            float distance = Vector2.Distance(_lastWorld, world);
+            int steps = Mathf.Max(1, Mathf.CeilToInt(distance / step));
+            for (int i = 0; i <= steps; i++)
+            {
+                float t = steps == 0 ? 1f : (float)i / steps;
+                Vector2 p = Vector2.Lerp(_lastWorld, world, t);
+                trailField.Paint(p, drawRadius, drawStrength);
+            }
+
+            _lastWorld = world;
+            _hasLast = true;
         }
     }
 }
