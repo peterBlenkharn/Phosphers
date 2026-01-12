@@ -3,6 +3,7 @@ using UnityEngine;
 using Phosphers.Agents;
 using Phosphers.Resources;
 using Phosphers.World; // for Anchor
+using Phosphers.Core.Pooling;
 
 namespace Phosphers.Core
 {
@@ -28,9 +29,8 @@ namespace Phosphers.Core
         public event System.Action<Phosphers.Agents.Phospher, Phosphers.Resources.BitSpec> OnBitDeposited; // NEW
 
         // Runtime
-        private readonly Queue<Bit> _pool = new Queue<Bit>();
-        private readonly HashSet<Bit> _active = new HashSet<Bit>();
-        public IReadOnlyCollection<Bit> ActiveBits => _active;
+        private ObjectPool<Bit> _pool;
+        public IReadOnlyCollection<Bit> ActiveBits => _pool != null ? _pool.Active : System.Array.Empty<Bit>();
 
         private void Awake()
         {
@@ -53,7 +53,7 @@ namespace Phosphers.Core
                 poolParent = go.transform;
             }
 
-            WarmPool(initialPoolSize);
+            _pool = new ObjectPool<Bit>(bitPrefab, initialPoolSize, worldParent, poolParent, logPoolWarnings);
         }
 
         public void ResetScore()
@@ -64,36 +64,20 @@ namespace Phosphers.Core
 
         public void WarmPool(int count)
         {
-            for (int i = 0; i < count; i++)
-            {
-                var b = Instantiate(bitPrefab, poolParent);
-                b.gameObject.SetActive(false);
-                b.MarkAvailable(false);
-                _pool.Enqueue(b);
-            }
+            _pool?.Warm(count);
         }
 
         public Bit SpawnBit(BitSpec spec, Vector2 position, float zRotDeg = 0f)
         {
-            if (_pool.Count == 0)
-            {
-                if (logPoolWarnings) Debug.LogWarning("[ResourceSystem] Bit pool exhausted; consider raising initialPoolSize.");
-                return null; // gracefully skip spawn
-            }
+            if (_pool == null) return null;
 
-            var bit = _pool.Dequeue();
-            _active.Add(bit);
-
-            bit.transform.SetParent(worldParent, false);
-            bit.transform.position = position;
-            bit.transform.rotation = Quaternion.Euler(0, 0, zRotDeg);
+            var bit = _pool.Get(position, Quaternion.Euler(0, 0, zRotDeg));
+            if (bit == null) return null;
 
             bit.Configure(spec);
             bit.MarkAvailable(true);
-
-            bit.gameObject.SetActive(true);
             OnBitSpawned?.Invoke(bit);                       // NEW
-            Debug.Log($"[RS] SpawnBit @ {position} (active={_active.Count})"); // DIAG
+            Debug.Log($"[RS] SpawnBit @ {position} (active={ActiveBits.Count})"); // DIAG
             return bit;
         }
 
@@ -101,33 +85,24 @@ namespace Phosphers.Core
         {
             if (bit == null) return;
 
-            // If it was active, retire it
-            if (_active.Remove(bit))
+            if (_pool == null) return;
+
+            bit.MarkAvailable(false);
+            if (_pool.Release(bit))
             {
-                bit.MarkAvailable(false);
-                bit.gameObject.SetActive(false);
-                bit.transform.SetParent(poolParent, false);
-                _pool.Enqueue(bit);
                 OnBitDespawned?.Invoke(bit);                     // NEW
                 bit.Owner = null;                                // clear link
-                Debug.Log($"[RS] DespawnBit (pool={_pool.Count})"); // DIAG
-            }
-            else
-            {
-                // Already pooled or unknown; ignore quietly
+                Debug.Log("[RS] DespawnBit"); // DIAG
             }
         }
 
         public void DespawnAllActive()
         {
-            // snapshot because DespawnBit mutates _active
-            if (_active.Count == 0) return;
-            var tmp = System.Array.Empty<Bit>();
-            if (tmp.Length < _active.Count) tmp = new Bit[_active.Count];
-            _active.CopyTo(tmp);
-            foreach (var b in tmp)
+            if (_pool == null || ActiveBits.Count == 0) return;
+            var tmp = new List<Bit>(ActiveBits);
+            foreach (var bit in tmp)
             {
-                if (b != null) DespawnBit(b);
+                if (bit != null) DespawnBit(bit);
             }
         }
 

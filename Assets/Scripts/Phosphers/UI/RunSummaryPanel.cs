@@ -37,6 +37,8 @@ namespace Phosphers.UI
 
         [Header("Appear")]
         [SerializeField] private float fadeTime = 0.18f;
+        [SerializeField] private bool showInMenu = true;
+        [SerializeField] private bool clearStatsOnMenu = true;
 
         private RunStats _stats;
 
@@ -66,6 +68,7 @@ namespace Phosphers.UI
 #endif
             }
             if (gameManager != null) gameManager.OnStateChanged += HandleStateChanged;
+            if (gameManager != null) HandleStateChanged(gameManager.CurrentState);
         }
 
         private void OnDisable()
@@ -78,6 +81,11 @@ namespace Phosphers.UI
             if (s == GameState.End)
             {
                 PopulateFromSnapshot();
+                Show();
+            }
+            else if (s == GameState.Menu && showInMenu)
+            {
+                if (clearStatsOnMenu) PopulateMenuDefaults();
                 Show();
             }
             else
@@ -100,6 +108,17 @@ namespace Phosphers.UI
             SetText(depositedTMP, depositedUGUI, string.Format(depositedFmt, snap.bitsDeposited));
             SetText(srcDiscTMP, srcDiscUGUI, string.Format(srcDiscFmt, snap.sourcesDiscovered));
             SetText(srcDeplTMP, srcDeplUGUI, string.Format(srcDeplFmt, snap.sourcesDepleted));
+        }
+
+        private void PopulateMenuDefaults()
+        {
+            SetText(scoreTMP, scoreUGUI, string.Format(scoreFmt, 0));
+            SetText(timeTMP, timeUGUI, string.Format(timeFmt, 0, 0));
+            SetText(spawnedTMP, spawnedUGUI, string.Format(spawnedFmt, 0));
+            SetText(pickedTMP, pickedUGUI, string.Format(pickedFmt, 0));
+            SetText(depositedTMP, depositedUGUI, string.Format(depositedFmt, 0));
+            SetText(srcDiscTMP, srcDiscUGUI, string.Format(srcDiscFmt, 0));
+            SetText(srcDeplTMP, srcDeplUGUI, string.Format(srcDeplFmt, 0));
         }
 
         private static void SetText(TMP_Text tmp, Text ugui, string value)

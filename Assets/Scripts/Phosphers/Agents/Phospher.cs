@@ -3,10 +3,11 @@ using Phosphers.Core;
 using Phosphers.Signals;
 using Phosphers.Perception;
 using Phosphers.Resources;
+using Phosphers.Core.Pooling;
 
 namespace Phosphers.Agents
 {
-    public class Phospher : MonoBehaviour
+    public class Phospher : MonoBehaviour, IPoolable
     {
         [SerializeField] private PhospherSettings settings;
         [SerializeField] private bool enableDevHotkeys = true;
@@ -42,13 +43,19 @@ namespace Phosphers.Agents
         public Vector2 Velocity => velocity;
         public PhospherInventory Inventory => inventory;
 
-
         public void Init(PhospherManager mgr, Transform anchor, IVectorField field, PhospherSettings s)
         {
             _mgr = mgr;
             _anchor = anchor;
             _field = field;
             settings = s;
+            state = PhospherState.Forage;
+            debugStateName = state.ToString();
+            _resumeState = PhospherState.Forage;
+            _recoverTimer = 0f;
+            _suppressSteeringTimer = 0f;
+            _seekTarget = null;
+            inventory.Clear();
             lifetimeRemaining = s.PickLifetime();
             velocity = Random.insideUnitCircle.normalized * (0.5f * Mathf.Min(1f, s.maxSpeed));
 
@@ -220,7 +227,7 @@ namespace Phosphers.Agents
                 accel += aObs;
             }
 
-            // Noise (small wander) – keep it even when suppressing, it's harmless
+            // Noise (small wander) ï¿½ keep it even when suppressing, it's harmless
             if (settings.weightNoise > 0f && settings.noiseJitterPerSec > 0f)
             {
                 Vector2 jitter = Random.insideUnitCircle * settings.noiseJitterPerSec;
@@ -394,8 +401,17 @@ namespace Phosphers.Agents
 
         public void DestroySelf()
         {
-            _mgr?.Unregister(this);
-            Destroy(gameObject);
+            if (_mgr != null) _mgr.Despawn(this);
+            else Destroy(gameObject);
+        }
+
+        public void OnSpawned()
+        {
+        }
+
+        public void OnDespawned()
+        {
+            inventory.Clear();
         }
 
         private static bool SegmentCircleHit(Vector2 p0, Vector2 p1, Vector2 c, float r, out float tHit, out Vector2 hit)

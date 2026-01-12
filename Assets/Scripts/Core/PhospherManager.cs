@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Phosphers.Agents;
 using Phosphers.Signals;
+using Phosphers.Core.Pooling;
 
 namespace Phosphers.Core
 {
@@ -17,6 +18,7 @@ namespace Phosphers.Core
 
         [Header("Spawn")]
         public int count = 12;
+        [SerializeField, Min(0)] private int initialPoolSize = 32;
 
         [Header("Spawn Timing")]
         [SerializeField] private bool spawnOverTime = true;
@@ -34,6 +36,11 @@ namespace Phosphers.Core
         public int spawnMaxAttemptsPerAgent = 20;
 
         private Coroutine _spawnRoutine;
+        private ObjectPool<Phospher> _pool;
+
+        [Header("Pooling Parents (optional)")]
+        [SerializeField] private Transform activeParent;
+        [SerializeField] private Transform poolParent;
 
         private readonly List<Phospher> _alive = new();
 
@@ -50,6 +57,7 @@ namespace Phosphers.Core
         {
             if (gameManager == null) Reset();
             if (gameManager != null) gameManager.OnStateChanged += HandleState;
+            EnsurePool();
         }
 
         private void OnDisable()
@@ -70,6 +78,7 @@ namespace Phosphers.Core
         {
             DespawnAll();
             if (phospherPrefab == null || settings == null || gameManager.AnchorTransform == null) return;
+            EnsurePool();
 
             if (_spawnRoutine != null) StopCoroutine(_spawnRoutine);
             _spawnRoutine = StartCoroutine(SpawnCo(gameManager.AnchorTransform));
@@ -85,7 +94,8 @@ namespace Phosphers.Core
             for (int i = 0; i < count; i++)
             {
                 Vector3 pos = FindSpawnPoint(anchor.position, ring);
-                var p = Instantiate(phospherPrefab, pos, Quaternion.identity);
+                var p = _pool != null ? _pool.Get(pos, Quaternion.identity) : null;
+                if (p == null) continue;
                 p.Init(this, anchor, Field, settings);
                 Register(p);
 
@@ -138,6 +148,14 @@ namespace Phosphers.Core
             _alive.Remove(p);
         }
 
+        public void Despawn(Phospher p)
+        {
+            if (p == null) return;
+            Unregister(p);
+            if (_pool != null) _pool.Release(p);
+            else Destroy(p.gameObject);
+        }
+
         public List<Phospher> GetNeighbours(Phospher requester, float radius)
         {
             float r2 = radius * radius;
@@ -155,8 +173,25 @@ namespace Phosphers.Core
         private void DespawnAll()
         {
             for (int i = _alive.Count - 1; i >= 0; i--)
-                if (_alive[i] != null) Destroy(_alive[i].gameObject);
-            _alive.Clear();
+                if (_alive[i] != null) Despawn(_alive[i]);
+        }
+
+        private void EnsurePool()
+        {
+            if (_pool != null || phospherPrefab == null) return;
+
+            if (activeParent == null)
+            {
+                var go = new GameObject("Phosphers.World");
+                activeParent = go.transform;
+            }
+            if (poolParent == null)
+            {
+                var go = new GameObject("Phosphers.Pool");
+                poolParent = go.transform;
+            }
+
+            _pool = new ObjectPool<Phospher>(phospherPrefab, initialPoolSize, activeParent, poolParent, true);
         }
     }
 }
