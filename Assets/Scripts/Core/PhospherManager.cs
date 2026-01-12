@@ -140,12 +140,17 @@ namespace Phosphers.Core
 
         public void Register(Phospher p)
         {
+            if (p == null) return;
             if (!_alive.Contains(p)) _alive.Add(p);
+            p.OnDeath += HandlePhospherDeath;
         }
 
         public void Unregister(Phospher p)
         {
+            if (p == null) return;
+            p.OnDeath -= HandlePhospherDeath;
             _alive.Remove(p);
+            CheckForRunEnd();
         }
 
         public void Despawn(Phospher p)
@@ -174,6 +179,19 @@ namespace Phosphers.Core
         {
             for (int i = _alive.Count - 1; i >= 0; i--)
                 if (_alive[i] != null) Despawn(_alive[i]);
+        }
+
+        private void HandlePhospherDeath(Phospher p)
+        {
+            // Placeholder for VFX/SFX hooks.
+        }
+
+        private void CheckForRunEnd()
+        {
+            if (gameManager == null) return;
+            if (gameManager.CurrentState != GameState.Run) return;
+            if (_alive.Count > 0) return;
+            gameManager.EndRun();
         }
 
         private void EnsurePool()

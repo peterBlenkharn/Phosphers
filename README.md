@@ -10,6 +10,8 @@ Phosphers is a Unity-based prototype focused on autonomous agents ("Phosphers") 
 - ✅ Resource system with pooled Bits, food sources, and scoring events.
 - ✅ Fog-of-war renderer with reveal masks and per-run reset support.
 - ✅ Basic UI panels for run HUD and end-of-run summaries.
+- ✅ Trail field painting/decay with phospher-followed signals and trail juice tracking.
+- ✅ Phospher lifetime expiry with run end when population reaches zero.
 
 **In Progress**
 - 🟡 Signal/field authoring and tuning for emergent steering behaviors.

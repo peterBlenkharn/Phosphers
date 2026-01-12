@@ -37,6 +37,7 @@ namespace Phosphers.Agents
 
         public event System.Action<BitSpec> OnBitPickedUp;
         public event System.Action<BitSpec> OnBitDeposited;
+        public event System.Action<Phospher> OnDeath;
 
         // readonly vars for fogrevealer
         public PhospherState State => state;
@@ -401,6 +402,7 @@ namespace Phosphers.Agents
 
         public void DestroySelf()
         {
+            OnDeath?.Invoke(this);
             if (_mgr != null) _mgr.Despawn(this);
             else Destroy(gameObject);
         }
