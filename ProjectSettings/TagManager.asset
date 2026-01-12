@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Bits
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1478884591
+    locked: 0
+  - name: Bits
+    uniqueID: 1068811355
+    locked: 0
+  - name: Fog
+    uniqueID: 2613286225
+    locked: 0
+  - name: Signals
+    uniqueID: 533459649
+    locked: 0
+  - name: Phosphers
+    uniqueID: 994936475
+    locked: 0
+  - name: VFX
+    uniqueID: 1784419281
+    locked: 0
+  - name: UI
+    uniqueID: 3094709145
+    locked: 0
+  m_RenderingLayers:
+  - Default

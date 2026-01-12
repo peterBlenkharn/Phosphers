@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67fc0c770095b7b44b3d3a3c2a8ffc5f, type: 3}
+  m_Name: DefaultPhospher
+  m_EditorClassIdentifier: 
+  maxSpeed: 1.8
+  maxAccel: 5
+  maxTurnRateDeg: 520
+  neighbourRadius: 3
+  separationRadius: 1
+  anchorAvoidMargin: 0.2
+  anchorAvoidForce: 8
+  anchorEdgeSnapMargin: 0.02
+  anchorExitSpeedFactor: 0.9
+  anchorExitJitterDeg: 12
+  anchorCollisionEpsilon: 0.01
+  anchorAvoidBand: 0.25
+  anchorAvoidNormalK: 10
+  anchorAvoidTangentK: 8
+  forageSlideSpeedFactor: 0.9
+  forageCollisionEpsilon: 0.01
+  recoverInsideSlack: 0.02
+  recoverExitBuffer: 0.04
+  recoverStepOutSpeed: 8
+  recoverHoldSeconds: 0.12
+  recoverJitterDeg: 10
+  spriteForwardOffsetDeg: -90
+  weightCohesion: 0.8
+  weightAlignment: 1
+  weightSeparation: 1.5
+  weightSignal: 1
+  weightReturn: 2
+  weightNoise: 0.25
+  noiseJitterPerSec: 1
+  depositRadius: 0.6
+  useLifetime: 0
+  lifetimeSecondsRange: {x: 30, y: 45}
