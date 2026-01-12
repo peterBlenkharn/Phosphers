@@ -17,6 +17,8 @@ This file tracks project intent, current status, and the latest requests from th
 - Trail painter now explicitly references the Phospher agent namespace to prevent missing type errors.
 - Phospher prefab no longer paints pheromone trails; trails are intended to be player-drawn via mouse input.
 - Trail drawing now interpolates mouse drags to keep pheromone strokes continuous.
+- Trail field now uses the dedicated Phospher_Trail material to avoid missing-shader artifacts.
+- Run HUD now owns the juice text alongside score/timer for consistent visibility.
 
 ## Owner Requests / Expectations
 - Provide comprehensive reviews and optimization/tidy-up recommendations.

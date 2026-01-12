@@ -20,9 +20,14 @@ namespace Phosphers.UI
         [SerializeField] private TMP_Text timerTMP;
         [SerializeField] private Text timerUGUI;
 
+        [Header("Juice UI (assign one)")]
+        [SerializeField] private TMP_Text juiceTMP;
+        [SerializeField] private Text juiceUGUI;
+
         [Header("Format")]
         [SerializeField] private string scoreFormat = "Score: {0}";
         [SerializeField] private string timerFormat = "{0:00}:{1:00}";
+        [SerializeField] private string juiceFormat = "Juice: {0:0}";
 
         [Header("Behaviour")]
         [Tooltip("HUD stays hidden until a Run state change is raised.")]
@@ -30,6 +35,7 @@ namespace Phosphers.UI
 
         private ResourceSystem _rs;
         private RunStats _stats;
+        private TrailJuiceSystem _juice;
         private bool _visible;
 
         private void Reset()
@@ -46,6 +52,7 @@ namespace Phosphers.UI
         {
             _rs = ResourceSystem.Instance;
             _stats = RunStats.Instance;
+            _juice = TrailJuiceSystem.Instance;
 
             if (gameManager == null)
             {
@@ -57,10 +64,12 @@ namespace Phosphers.UI
             }
             if (gameManager != null) gameManager.OnStateChanged += HandleState;
             if (_rs != null) _rs.OnScoreChanged += HandleScoreChanged;
+            if (_juice != null) _juice.OnJuiceChanged += HandleJuiceChanged;
 
             // Initial text
             UpdateScoreText(_rs != null ? _rs.Score : 0);
             UpdateTimerText(0f);
+            UpdateJuiceText(_juice != null ? _juice.CurrentJuice : 0f);
 
             // Initial visibility
             ApplyVisibility(!hideUntilRunEvent);
@@ -70,6 +79,7 @@ namespace Phosphers.UI
         {
             if (gameManager != null) gameManager.OnStateChanged -= HandleState;
             if (_rs != null) _rs.OnScoreChanged -= HandleScoreChanged;
+            if (_juice != null) _juice.OnJuiceChanged -= HandleJuiceChanged;
         }
 
         private void HandleState(GameState s)
@@ -79,6 +89,7 @@ namespace Phosphers.UI
                 ApplyVisibility(true);
                 UpdateScoreText(_rs != null ? _rs.Score : 0);
                 UpdateTimerText(0f);
+                UpdateJuiceText(_juice != null ? _juice.CurrentJuice : 0f);
             }
             else if (s == GameState.Menu || s == GameState.End)
             {
@@ -102,6 +113,7 @@ namespace Phosphers.UI
         }
 
         private void HandleScoreChanged(int newScore) => UpdateScoreText(newScore);
+        private void HandleJuiceChanged(float current, float max) => UpdateJuiceText(current);
 
         private void Update()
         {
@@ -127,6 +139,13 @@ namespace Phosphers.UI
 
             if (timerTMP != null) timerTMP.text = t;
             else if (timerUGUI != null) timerUGUI.text = t;
+        }
+
+        private void UpdateJuiceText(float value)
+        {
+            string text = string.Format(juiceFormat, value);
+            if (juiceTMP != null) juiceTMP.text = text;
+            else if (juiceUGUI != null) juiceUGUI.text = text;
         }
     }
 }

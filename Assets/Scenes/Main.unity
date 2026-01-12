@@ -1158,8 +1158,11 @@ MonoBehaviour:
   scoreUGUI: {fileID: 0}
   timerTMP: {fileID: 1009442149}
   timerUGUI: {fileID: 0}
+  juiceTMP: {fileID: 2008581547}
+  juiceUGUI: {fileID: 0}
   scoreFormat: 'Score: {0}'
   timerFormat: '{0:00}:{1:00}'
+  juiceFormat: 'Juice: {0:0}'
   hideUntilRunEvent: 1
 --- !u!225 &1208769815
 CanvasGroup:
@@ -2211,7 +2214,7 @@ MonoBehaviour:
   intensityThreshold: 0.02
   scaleByIntensity: 1
   trailRenderer: {fileID: 2620198967}
-  trailMaterialTemplate: {fileID: 0}
+  trailMaterialTemplate: {fileID: 2100000, guid: cd7917ff56731b4418d96266bb281f6f, type: 2}
 --- !u!1 &2534002944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2270,7 +2273,6 @@ GameObject:
   - component: {fileID: 2545110558}
   - component: {fileID: 2208564079}
   - component: {fileID: 2008581547}
-  - component: {fileID: 2377110613}
   m_Layer: 5
   m_Name: TrailJuiceText
   m_TagString: Untagged
@@ -2396,21 +2398,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2577615757}
   m_CullTransparentMesh: 1
---- !u!114 &2377110613
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2577615757}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34d6f2c9cf5343b7b56d6abcb9ac1c86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  juiceTMP: {fileID: 2008581547}
-  juiceUGUI: {fileID: 0}
-  format: 'Juice: {0:0}'
 --- !u!1 &2126074113
 GameObject:
   m_ObjectHideFlags: 0
