@@ -1,4 +1,5 @@
 using UnityEngine;
+using Phosphers.Agents;
 namespace Phosphers.Signals
 {
     [RequireComponent(typeof(Phospher))]

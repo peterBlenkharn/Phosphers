@@ -14,6 +14,7 @@ This file tracks project intent, current status, and the latest requests from th
 - Basic UI panels show run stats and end-of-run summaries.
 - Trail field painting/decay is in place, with phospher-driven trail signals and a trail juice HUD.
 - Phospher lifetime expiry triggers a death event and ends the run when population reaches zero.
+- Trail painter now explicitly references the Phospher agent namespace to prevent missing type errors.
 
 ## Owner Requests / Expectations
 - Provide comprehensive reviews and optimization/tidy-up recommendations.
@@ -25,6 +26,7 @@ This file tracks project intent, current status, and the latest requests from th
 - Tune signal fields and steering weights for clearer emergent behaviors.
 - Expand UI/VFX feedback for deposits, depletion, and run transitions.
 - Decide on trail rendering visuals (material, palette, blending) and tune decay/strength.
+- Audit signal-related scripts for missing namespace/import references after refactors.
 
 ## Open Questions
 - What is the target platform and performance budget?
