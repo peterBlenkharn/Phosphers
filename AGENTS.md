@@ -12,9 +12,13 @@ This file tracks project intent, current status, and the latest requests from th
 - Resource system handles pooled bit spawning and scoring.
 - Fog-of-war system uses a mask texture with per-run reset.
 - Basic UI panels show run stats and end-of-run summaries.
-- Trail field painting/decay is in place, with phospher-driven trail signals and a trail juice HUD.
+- Trail field painting/decay is in place, with player-drawn trails and a trail juice HUD.
 - Phospher lifetime expiry triggers a death event and ends the run when population reaches zero.
 - Trail painter now explicitly references the Phospher agent namespace to prevent missing type errors.
+- Phospher prefab no longer paints pheromone trails; trails are intended to be player-drawn via mouse input.
+- Trail drawing now interpolates mouse drags to keep pheromone strokes continuous.
+- Trail field now uses the dedicated Phospher_Trail material to avoid missing-shader artifacts.
+- Run HUD now owns the juice text alongside score/timer for consistent visibility.
 
 ## Owner Requests / Expectations
 - Provide comprehensive reviews and optimization/tidy-up recommendations.
@@ -27,6 +31,7 @@ This file tracks project intent, current status, and the latest requests from th
 - Expand UI/VFX feedback for deposits, depletion, and run transitions.
 - Decide on trail rendering visuals (material, palette, blending) and tune decay/strength.
 - Audit signal-related scripts for missing namespace/import references after refactors.
+- Verify player-drawn pheromone trails remain the only paint source and decay correctly during runs.
 
 ## Open Questions
 - What is the target platform and performance budget?
